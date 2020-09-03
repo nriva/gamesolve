@@ -1,0 +1,17 @@
+.gametable {
+    border-collapse: collapse;
+}
+  
+table, th, .tablecell {
+  border: 1px solid black;
+}
+
+.tablecell {
+  width: 100px;
+  text-align: center;
+  font: 500 12px/20px Roboto,"Helvetica Neue",sans-serif;
+}
+
+.tablerow {
+  height: 60px;
+}

@@ -1,21 +1,134 @@
 <!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
-</div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/cli">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
+<mat-card>
+<h1>Welcome to {{ title }}!</h1>
+</mat-card>
+<mat-toolbar>
+  <mat-toolbar-row>
+  <button mat-raised-button (click)="schema.resetWorkCells()">Reset</button>&nbsp;
+  <button mat-raised-button (click)="schema.step()">Step</button>&nbsp;
+  <button mat-raised-button (click)="schema.solve()">Solve</button>&nbsp;
+  <button mat-raised-button (click)="schema.stop()">Stop</button>&nbsp;
+  <mat-progress-bar *ngIf="schema.solving" mode="indeterminate"></mat-progress-bar>
+</mat-toolbar-row>
+<mat-toolbar-row>
+  <span>Round: {{schema.round}}</span>&nbsp;
+  <span>{{schema.solutionResult}}</span>
+</mat-toolbar-row>
+  
+</mat-toolbar>
+
+
+<table class="gametable">
+<tr class="tablerow">
+<td class="tablecell"><span id="cell11">{{schema.getCellValueRep(0,0)}}</span></td>
+<td class="tablecell"><span id="cell12">{{schema.getCellValueRep(0,1)}}</span></td>  
+<td class="tablecell"><span id="cell13">{{schema.getCellValueRep(0,2)}}</span></td>
+<td class="tablecell"><span id="cell14">{{schema.getCellValueRep(0,3)}}</span></td>
+<td class="tablecell"><span id="cell15">{{schema.getCellValueRep(0,4)}}</span></td>
+<td class="tablecell"><span id="cell16">{{schema.getCellValueRep(0,5)}}</span></td>
+<td class="tablecell"><span id="cell17">{{schema.getCellValueRep(0,6)}}</span></td>
+<td class="tablecell"><span id="cell18">{{schema.getCellValueRep(0,7)}}</span></td>
+<td class="tablecell"><span id="cell19">{{schema.getCellValueRep(0,8)}}</span></td>
+</tr>
+
+<tr class="tablerow">
+  <td class="tablecell"><span id="cell21">{{schema.getCellValueRep(1,0)}}</span></td>
+  <td class="tablecell"><span id="cell22">{{schema.getCellValueRep(1,1)}}</span></td>  
+  <td class="tablecell"><span id="cell23">{{schema.getCellValueRep(1,2)}}</span></td>
+  <td class="tablecell"><span id="cell24">{{schema.getCellValueRep(1,3)}}</span></td>
+  <td class="tablecell"><span id="cell25">{{schema.getCellValueRep(1,4)}}</span></td>
+  <td class="tablecell"><span id="cell26">{{schema.getCellValueRep(1,5)}}</span></td>
+  <td class="tablecell"><span id="cell27">{{schema.getCellValueRep(1,6)}}</span></td>
+  <td class="tablecell"><span id="cell28">{{schema.getCellValueRep(1 ,7)}}</span></td>
+  <td class="tablecell"><span id="cell29">{{schema.getCellValueRep(1 , 8)}}</span></td>
+  </tr>
+  
+  <tr class="tablerow">
+    <td class="tablecell"><span id="cell31">{{schema.getCellValueRep(2 , 0)}}</span></td>
+    <td class="tablecell"><span id="cell32">{{schema.getCellValueRep(2 , 1)}}</span></td>  
+    <td class="tablecell"><span id="cell33">{{schema.getCellValueRep(2 , 2)}}</span></td>
+    <td class="tablecell"><span id="cell34">{{schema.getCellValueRep(2 , 3)}}</span></td>
+    <td class="tablecell"><span id="cell35">{{schema.getCellValueRep(2 , 4)}}</span></td>
+    <td class="tablecell"><span id="cell36">{{schema.getCellValueRep(2 , 5)}}</span></td>
+    <td class="tablecell"><span id="cell37">{{schema.getCellValueRep(2 , 6)}}</span></td>
+    <td class="tablecell"><span id="cell38">{{schema.getCellValueRep(2 , 7)}}</span></td>
+    <td class="tablecell"><span id="cell39">{{schema.getCellValueRep(2 , 8)}}</span></td>
+    </tr>
+
+    <tr class="tablerow">
+      <td class="tablecell"><span id="cell41">{{schema.getCellValueRep(3 , 0)}}</span></td>
+      <td class="tablecell"><span id="cell42">{{schema.getCellValueRep(3 , 1)}}</span></td>  
+      <td class="tablecell"><span id="cell43">{{schema.getCellValueRep(3 , 2)}}</span></td>
+      <td class="tablecell"><span id="cell44">{{schema.getCellValueRep(3 , 3)}}</span></td>
+      <td class="tablecell"><span id="cell45">{{schema.getCellValueRep(3 , 4)}}</span></td>
+      <td class="tablecell"><span id="cell46">{{schema.getCellValueRep(3 , 5)}}</span></td>
+      <td class="tablecell"><span id="cell47">{{schema.getCellValueRep(3 , 6)}}</span></td>
+      <td class="tablecell"><span id="cell48">{{schema.getCellValueRep(3 , 7)}}</span></td>
+      <td class="tablecell"><span id="cell49">{{schema.getCellValueRep(3 , 8)}}</span></td>
+      </tr>
+
+      <tr class="tablerow">
+        <td class="tablecell"><span id="cell51">{{schema.getCellValueRep(4 , 0)}}</span></td>
+        <td class="tablecell"><span id="cell52">{{schema.getCellValueRep(4 , 1)}}</span></td>  
+        <td class="tablecell"><span id="cell53">{{schema.getCellValueRep(4 , 2)}}</span></td>
+        <td class="tablecell"><span id="cell54">{{schema.getCellValueRep(4 , 3)}}</span></td>
+        <td class="tablecell"><span id="cell55">{{schema.getCellValueRep(4 , 4)}}</span></td>
+        <td class="tablecell"><span id="cell56">{{schema.getCellValueRep(4 , 5)}}</span></td>
+        <td class="tablecell"><span id="cell57">{{schema.getCellValueRep(4 , 6)}}</span></td>
+        <td class="tablecell"><span id="cell58">{{schema.getCellValueRep(4 , 7)}}</span></td>
+        <td class="tablecell"><span id="cell59">{{schema.getCellValueRep(4 , 8)}}</span></td>
+        </tr>
+
+        <tr class="tablerow">
+          <td class="tablecell"><span id="cell61">{{schema.getCellValueRep(5 , 0)}}</span></td>
+          <td class="tablecell"><span id="cell62">{{schema.getCellValueRep(5 , 1)}}</span></td>  
+          <td class="tablecell"><span id="cell63">{{schema.getCellValueRep(5 , 2)}}</span></td>
+          <td class="tablecell"><span id="cell64">{{schema.getCellValueRep(5 , 3)}}</span></td>
+          <td class="tablecell"><span id="cell65">{{schema .getCellValueRep(5 , 4)}}</span></td>
+          <td class="tablecell"><span id="cell66">{{schema .getCellValueRep(5 , 5)}}</span></td>
+          <td class="tablecell"><span id="cell67">{{schema .getCellValueRep(5 , 6)}}</span></td>
+          <td class="tablecell"><span id="cell68">{{schema .getCellValueRep(5 , 7)}}</span></td>
+          <td class="tablecell"><span id="cell69">{{schema .getCellValueRep(5 , 8)}}</span></td>
+          </tr>
+
+          <tr class="tablerow">
+            <td class="tablecell"><span id="cell71">{{schema .getCellValueRep(6 , 0)}}</span></td>
+            <td class="tablecell"><span id="cell72">{{schema .getCellValueRep(6 , 1)}}</span></td>  
+            <td class="tablecell"><span id="cell73">{{schema .getCellValueRep(6 , 2)}}</span></td>
+            <td class="tablecell"><span id="cell74">{{schema .getCellValueRep(6 , 3)}}</span></td>
+            <td class="tablecell"><span id="cell75">{{schema .getCellValueRep(6 , 4)}}</span></td>
+            <td class="tablecell"><span id="cell76">{{schema .getCellValueRep(6 , 5)}}</span></td>
+            <td class="tablecell"><span id="cell77">{{schema .getCellValueRep(6 , 6)}}</span></td>
+            <td class="tablecell"><span id="cell78">{{schema .getCellValueRep(6 , 7)}}</span></td>
+            <td class="tablecell"><span id="cell79">{{schema .getCellValueRep(6 , 8)}}</span></td>
+          </tr>
+
+          <tr class="tablerow">
+            <td class="tablecell"><span id="cell81">{{schema .getCellValueRep(7 , 0)}}</span></td>
+            <td class="tablecell"><span id="cell82">{{schema .getCellValueRep(7 , 1)}}</span></td>  
+            <td class="tablecell"><span id="cell83">{{schema .getCellValueRep(7 , 2)}}</span></td>
+            <td class="tablecell"><span id="cell84">{{schema .getCellValueRep(7 , 3)}}</span></td>
+            <td class="tablecell"><span id="cell85">{{schema .getCellValueRep(7 , 4)}}</span></td>
+            <td class="tablecell"><span id="cell86">{{schema .getCellValueRep(7 , 5)}}</span></td>
+            <td class="tablecell"><span id="cell87">{{schema .getCellValueRep(7 , 6)}}</span></td>
+            <td class="tablecell"><span id="cell88">{{schema .getCellValueRep(7 , 7)}}</span></td>
+            <td class="tablecell"><span id="cell89">{{schema .getCellValueRep(7 , 8)}}</span></td>
+          </tr>
+
+          <tr class="tablerow">
+            <td class="tablecell"><span id="cell91">{{schema .getCellValueRep(8 , 0)}}</span></td>
+            <td class="tablecell"><span id="cell92">{{schema .getCellValueRep(8 , 1)}}</span></td>  
+            <td class="tablecell"><span id="cell93">{{schema .getCellValueRep(8 , 2)}}</span></td>
+            <td class="tablecell"><span id="cell94">{{schema .getCellValueRep(8 , 3)}}</span></td>
+            <td class="tablecell"><span id="cell95">{{schema .getCellValueRep(8 , 4)}}</span></td>
+            <td class="tablecell"><span id="cell96">{{schema .getCellValueRep(8 , 5)}}</span></td>
+            <td class="tablecell"><span id="cell97">{{schema .getCellValueRep(8 , 6)}}</span></td>
+            <td class="tablecell"><span id="cell98">{{schema .getCellValueRep(8 , 7)}}</span></td>
+            <td class="tablecell"><span id="cell99">{{schema .getCellValueRep(8 , 8)}}</span></td>
+          </tr>
+
+
+
+</table>
 
 <router-outlet></router-outlet>

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { GameSchema } from './game-schema';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,12 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'gamesolve';
+
+  public schema: GameSchema =  new GameSchema();
+
+  constructor() {
+
+  }
+
+
 }
