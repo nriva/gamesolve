@@ -1,8 +1,16 @@
 import { GameCell } from '../shared/game-cell';
+import { element } from '@angular/core/src/render3';
+import { checkNoChangesInRootView } from '@angular/core/src/render3/instructions';
+import { ViewChild, ElementRef } from '@angular/core';
 
 export class GameSchema {
 
     public cells: GameCell[][];
+
+    public inputCells: number[][] = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]];
+
 
     /*
        public highlight: number[][] = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -10,42 +18,25 @@ export class GameSchema {
                                        [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]];
     */
 
-    public origCells: number[][] = [
-        [5, 3, 0, 0, 7, 0, 0, 0, 0],
-        [6, 0, 0, 1, 9, 5, 0, 0, 0],
-        [0, 9, 8, 0, 0, 0, 0, 6, 0],
-        [8, 0, 0, 0, 6, 0, 0, 0, 3],
-        [4, 0, 0, 8, 0, 3, 0, 0, 1],
-        [7, 0, 0, 0, 2, 0, 0, 0, 6],
-        [0, 6, 0, 0, 0, 0, 2, 8, 0],
-        [0, 0, 0, 4, 1, 9, 0, 0, 5],
-        [0, 0, 0, 0, 8, 0, 0, 7, 9]];
+   public startupCells: number[][] = [
+    [5, 3, 0, 0, 7, 0, 0, 0, 0],
+    [6, 0, 0, 1, 9, 5, 0, 0, 0],
+    [0, 9, 8, 0, 0, 0, 0, 6, 0],
+    [8, 0, 0, 0, 6, 0, 0, 0, 3],
+    [4, 0, 0, 8, 0, 3, 0, 0, 1],
+    [7, 0, 0, 0, 2, 0, 0, 0, 6],
+    [0, 6, 0, 0, 0, 0, 2, 8, 0],
+    [0, 0, 0, 4, 1, 9, 0, 0, 5],
+    [0, 0, 0, 0, 8, 0, 0, 7, 9]];
 
 
-    /*    
-    public cells: number[][] = [
-                                [5, 3, 0, 0, 7, 0, 0, 0, 0],
-                                [6, 0, 0, 1, 9, 5, 0, 0, 0],
-                                [0, 9, 8, 0, 0, 0, 0, 6, 0],
-                                [8, 0, 0, 0, 6, 0, 0, 0, 3],
-                                [4, 0, 0, 8, 0, 3, 0, 0, 1],
-                                [7, 0, 0, 0, 2, 0, 0, 0, 6],
-                                [0, 6, 0, 0, 0, 0, 2, 8, 0],
-                                [0, 0, 0, 4, 1, 9, 0, 0, 5],
-                                [0, 0, 0, 0, 8, 0, 0, 7, 9]];
+    public origCells: number[][] = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]];
 
-    public workCells: number[][][] = [
-        [[], [], [], [], [], [], [], [], []],
-        [[], [], [], [], [], [], [], [], []],
-        [[], [], [], [], [], [], [], [], []],
-        [[], [], [], [], [], [], [], [], []],
-        [[], [], [], [], [], [], [], [], []],
-        [[], [], [], [], [], [], [], [], []],
-        [[], [], [], [], [], [], [], [], []],
-        [[], [], [], [], [], [], [], [], []],
-        [[], [], [], [], [], [], [], [], []]];
-    */
+
     public solutionResult = '';
+    public checkResult = '';
 
     public solved = false;
     public solving: boolean;
@@ -54,6 +45,13 @@ export class GameSchema {
     public round = 0;
 
     constructor() {
+
+        for (let i = 0; i < 9; i++) {
+            for (let j = 0; j < 9; j++) {
+                this.origCells[i][j] = this.startupCells[i][j];
+            }
+        }
+
         this.cells = this.createCells(this.origCells);
     }
 
@@ -74,14 +72,17 @@ export class GameSchema {
     }
 
     public getCellValueRep(row: number, col: number): string {
-        return (this.cells[row][col].value === 0 ? '' : String(this.cells[row][col].value))
-                            + ' [' + String(this.cells[row][col].values) + ']';
+        const values = this.getCellValuesRep(row, col);
+        return `${this.cells[row][col].value === 0 ? '' : String(this.cells[row][col].value)}${values}`;
     }
 
-
-
-
-
+    public getCellValuesRep(row: number, col: number): string {
+        let values = '';
+        if (this.cells[row][col].values.length > 0) {
+            values = ` [${String(this.cells[row][col].values)}]`;
+        }
+        return values;
+    }
 
     public resetWorkCells() {
         this.cells = this.createCells(this.origCells);
@@ -105,8 +106,7 @@ export class GameSchema {
                 workCells[r][c].value = this.cells[r][c].value;
                 workCells[r][c].values = this.cells[r][c].values.filter(() => true);
             }
-        }        
-        
+        }
 
         for (let r = 0; r < 9; r++) {
             for (let c = 0; c < 9; c++) {
@@ -178,6 +178,9 @@ export class GameSchema {
         } else {
             this.solutionResult = 'Solution found after ' + this.round + ' tentatives';
         }
+        if (this.solved) {
+            this.check();
+        }
 
     }
 
@@ -192,12 +195,8 @@ export class GameSchema {
 
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
-
-                //if (cells[sr + i][sc + j].values.length > 1) {
-
-                    const a = cells[sr * 3 + i][sc * 3 + j].values.filter((value_, index, arr) => value_ !== value);
-                    cells[sr * 3 + i][sc * 3 + j].values =  a;
-                //}
+                const a = cells[sr * 3 + i][sc * 3 + j].values.filter((value_, index, arr) => value_ !== value);
+                cells[sr * 3 + i][sc * 3 + j].values =  a;
             }
         }
 
@@ -205,22 +204,108 @@ export class GameSchema {
 
     private removeFromCol(cells: GameCell[][], c: number, value: number) {
         for (let i = 0; i < 9; i++) {
-            //if (cells[i][c].values.length > 1) {
-                cells[i][c].values =  cells[i][c].values.filter((value_, index, arr) => value_ !== value);
-            //}
+            cells[i][c].values =  cells[i][c].values.filter((value_, index, arr) => value_ !== value);
         }
     }
 
     private removeFromRow(cells: GameCell[][], r: number, value: number) {
         for (let i = 0; i < 9; i++) {
-            //if (cells[r][i].values.length > 1) {
-                const array = cells[r][i].values.filter((value_, index, arr) => value_ !== value);
-                cells[r][i].values =  array;
-            //}
+            const array = cells[r][i].values.filter((value_, index, arr) => value_ !== value);
+            cells[r][i].values =  array;
         }
 
     }
 
+    public check() {
 
+        let error = false;
+
+        this.checkResult = 'Checking rows...';
+        for (let r = 0; r < 9; r++) {
+
+            const positions  = this.getRowPositions(r);
+            error = error || !this.chekPostions(r, positions, 'row');
+        }
+        this.checkResult = 'Checking columns...';
+        if (!error) {
+            for (let c = 0; c < 9; c++) {
+                const positions  = this.getColPositions(c);
+                error = error || !this.chekPostions(c, positions, 'column');
+            }
+        }
+        this.checkResult = 'Checking squares...';
+        if (!error) {
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 3; c++) {
+                    const positions  = this.getSquarePositions(r, c);
+                    error = error || !this.chekPostions('${r},${c}', positions, 'square');
+                }
+            }
+        }
+        if (!error) {
+            this.checkResult = 'Checked!';
+        }
+    }
+
+    chekPostions(orign: any, positions: {row: number, col: number}[], checkTypeMsg: string): boolean {
+        const counters = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+        // tslint:disable-next-line: prefer-for-of
+        for (let p = 0; p < positions.length; p++) {
+            counters[ this.cells[ positions[p].row ][ positions[p].col].value ]++;
+        }
+
+        if (counters[0] > 0) {
+            this.checkResult = 'Row ${r} not completely solved';
+            return false;
+        }
+
+        const wrongindex = counters.findIndex( (value, index, arr) => index === 0 ? false : value > 1);
+        if (wrongindex !== -1) {
+            this.checkResult = `Number ${wrongindex} in present more than once in ${checkTypeMsg} ${orign}`;
+            return false;
+        }
+
+        return true;
+    }
+
+
+
+    getRowPositions(currentrow: number): {row: number, col: number}[] {
+
+        const postions = [];
+        for (let c = 0; c < 9; c++) {
+            postions.push({row: currentrow, col: c});
+        }
+
+        return postions;
+    }
+
+    getColPositions(currentcol: number): {row: number, col: number}[] {
+
+        const postions = [];
+        for (let r = 0; r < 9; r++) {
+            postions.push({row: r, col: currentcol});
+        }
+
+        return postions;
+    }
+
+    getSquarePositions(sqrow: number, sqcol: number): {row: number, col: number}[] {
+
+        const postions = [];
+        for (let r = 0; r < 3; r++) {
+            for (let c = 0; c < 3; c++) {
+                postions.push({row: sqrow * 3 + r, col: sqcol * 3 + c});
+            }
+        }
+
+        return postions;
+    }
+
+    public setInputValue(row: number, col: number, value: string) {
+        this.inputCells[row][col] = value.length === 0 ? 0 : Number(value);
+        this.cells[row][col].setValue(this.inputCells[row][col]);
+    }
 }
 

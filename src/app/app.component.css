@@ -1,8 +1,9 @@
 .gametable {
     border-collapse: collapse;
+    border: 1px solid black;
 }
   
-table, th, .tablecell {
+th, .tablecell {
   border: 1px solid black;
 }
 
@@ -14,4 +15,13 @@ table, th, .tablecell {
 
 .tablerow {
   height: 60px;
+}
+
+.tablecellinner {
+  width: 100%;
+}
+
+.cellvalue, .cellvalues {
+  width: 100%;
+  text-align: center;
 }

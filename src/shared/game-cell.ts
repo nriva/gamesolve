@@ -17,4 +17,10 @@ export class GameCell {
         this.value = value;
         this.values = [];
     }
+
+    public setValue(value: number) {
+        this.value = value;
+        this.values = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter( (elem, index, a) => elem !== value );
+    }
+
 }
