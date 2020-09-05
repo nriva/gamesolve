@@ -1,5 +1,6 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { GameSchema } from './game-schema';
+import { MatChipListBase } from '@angular/material';
 
 @Component({
   selector: 'app-root',
@@ -187,12 +188,51 @@ export class AppComponent {
       this.schema.setInputValue(8, 6, this.input97.nativeElement.value);
       this.schema.setInputValue(8, 7, this.input98.nativeElement.value);
       this.schema.setInputValue(8, 8, this.input99.nativeElement.value);
-      
     }
 
     this.isInput = !this.isInput;
     this.inputAction = this.isInput ? 'Confirm' : 'New';
 }  
+
+  public onPaste(event: ClipboardEvent) {
+
+    if (!this.isInput) {
+        return;
+    }
+
+    let pastedText = event.clipboardData.getData('text');
+
+    if (typeof pastedText === 'undefined') { return; }
+    if (pastedText === null) { return; }
+    pastedText = pastedText.trim();
+    if (pastedText.length === 0) { return; }
+
+    const lines = pastedText.split('\r');
+
+    let setCounter = 0;
+
+    if (lines.length === 9) {
+      // tslint:disable-next-line: prefer-for-of
+      for (let i = 0; i < lines.length; i++) {
+        const values = lines[i].trim().split(',');
+        if (values.length === 9) {
+          // tslint:disable-next-line: prefer-for-of
+          for (let j = 0; j < values.length; j++) {
+              this.schema.setInputValue(i, j, values[j].trim(), false);
+              setCounter++;
+          }
+        }
+      }
+    }
+
+    if (setCounter === 81) {
+      this.schema.confirmAllInputValue();
+      this.isInput = false;
+      this.inputAction = 'New';
+    }
+
+
+  }
 
 
 }

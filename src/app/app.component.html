@@ -9,10 +9,14 @@
   <button mat-raised-button (click)="schema.solve()">Solve</button>&nbsp;
   <button mat-raised-button (click)="schema.stop()">Stop</button>&nbsp;
   <button mat-raised-button (click)="input()">{{inputAction}}</button>&nbsp;
+  <span *ngIf="schema.solving">Round: {{schema.round}}</span>&nbsp;
+  <span *ngIf="isInput">
+  <label>Fast Input:</label><input type=text (paste)="onPaste($event)">
+  Comma separated valued for each line, line sperated by newline chars.
+  </span>
 </mat-toolbar-row>
 <mat-toolbar-row>
-  <span>Round: {{schema.round}}</span>&nbsp;
-  <span>{{schema.solutionResult}}</span>&nbsp;
+    <span>{{schema.solutionResult}}</span>&nbsp;
   <span>{{schema.checkResult}}</span>
 </mat-toolbar-row>
 <!-- mat-toolbar-row>
@@ -23,7 +27,7 @@
 
 <table class="gametable">
 <tr class="tablerow">
-  <td class="tablecell"><span *ngIf="!isInput" id="cell11">{{schema.getCellValueRep(0, 0)}}</span><input class="inputCell" id=input11 maxlength="1" type=text *ngIf="isInput" #input11></td>
+  <td class="tablecell"><span *ngIf="!isInput" id="cell11">{{schema.getCellValueRep(0, 0)}}</span><input class="inputCell" id=input11 maxlength="1" type=text *ngIf="isInput" #input11 (paste)="onPaste($event)"></td>
   <td class="tablecell"><span *ngIf="!isInput" id="cell12">{{schema.getCellValueRep(0, 1)}}</span><input class="inputCell" id=input12 maxlength="1" type=text *ngIf="isInput" #input12></td>
   <td class="tablecell"><span *ngIf="!isInput" id="cell13">{{schema.getCellValueRep(0, 2)}}</span><input class="inputCell" id=input13 maxlength="1" type=text *ngIf="isInput" #input13></td>
   <td class="tablecell"><span *ngIf="!isInput" id="cell14">{{schema.getCellValueRep(0, 3)}}</span><input class="inputCell" id=input14 maxlength="1" type=text *ngIf="isInput" #input14></td>

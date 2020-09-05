@@ -2,23 +2,21 @@ import { GameCell } from '../shared/game-cell';
 import { element } from '@angular/core/src/render3';
 import { checkNoChangesInRootView } from '@angular/core/src/render3/instructions';
 import { ViewChild, ElementRef } from '@angular/core';
+import { GameSchemaChecker } from 'src/shared/game-schema-checker';
 
 export class GameSchema {
 
+    // elle effettive
     public cells: GameCell[][];
 
+    // celle valorizzate nel processo di input
     public inputCells: number[][] = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]];
 
 
-    /*
-       public highlight: number[][] = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                                       [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                                       [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]];
-    */
-
-   public startupCells: number[][] = [
+    // Esempio di partenza
+    public startupCells: number[][] = [
     [5, 3, 0, 0, 7, 0, 0, 0, 0],
     [6, 0, 0, 1, 9, 5, 0, 0, 0],
     [0, 9, 8, 0, 0, 0, 0, 6, 0],
@@ -30,11 +28,13 @@ export class GameSchema {
     [0, 0, 0, 0, 8, 0, 0, 7, 9]];
 
 
+    // Celle prima dell'inizio della soluzione
     public origCells: number[][] = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]];
 
 
+    // Messaggio con l'esito della ricerca della soluzione
     public solutionResult = '';
     public checkResult = '';
 
@@ -43,6 +43,8 @@ export class GameSchema {
     public stopped: boolean;
 
     public round = 0;
+
+    private readonly MAX_ROUNDS = 99999;
 
     constructor() {
 
@@ -141,7 +143,7 @@ export class GameSchema {
         this.solved = true;
         for (let r = 0; r < 9; r++) {
             for (let c = 0; c < 9; c++) {
-                if (this.cells[r][c].value === 0) {
+                if (this.cells[r][c].value === 0 || this.cells[r][c].values.length > 0) {
                     this.solved = false;
                 }
             }
@@ -151,7 +153,7 @@ export class GameSchema {
         this.round++;
 
         const that = this;
-        if (!this.solved && this.round <= 99999 && solvedOneCell) {
+        if (!this.solved && this.round <= this.MAX_ROUNDS && solvedOneCell) {
             if (this.solving) { setTimeout( () => that.step(), 1000); }
         } else {
             this.lastRound(solvedOneCell);
@@ -172,16 +174,22 @@ export class GameSchema {
         this.solving = false;
         this.stopped = true;
         if (!solvedOneCell) {
-            this.solutionResult = 'Solution search stopped after ' + this.round + ' tentatives';
+            this.solutionResult = 'Solution search stopped after ' + this.round + ' steps.';
         } else if (!this.solved) {
-            this.solutionResult = 'Solution not found after ' + this.round + ' tentatives';
+            this.solutionResult = 'Solution not found after ' + this.round + ' steps.';
         } else {
-            this.solutionResult = 'Solution found after ' + this.round + ' tentatives';
+            this.solutionResult = 'Solution found after ' + this.round + ' steps.';
         }
         if (this.solved) {
             this.check();
         }
 
+    }
+
+    public check() {
+        const checker = new GameSchemaChecker();
+        const result = checker.check(this.cells);
+        this.checkResult = result.resultMessage;
     }
 
     private removeFromSquare(cells: GameCell[][], r: number, c: number, value: number) {
@@ -216,96 +224,21 @@ export class GameSchema {
 
     }
 
-    public check() {
 
-        let error = false;
-
-        this.checkResult = 'Checking rows...';
-        for (let r = 0; r < 9; r++) {
-
-            const positions  = this.getRowPositions(r);
-            error = error || !this.chekPostions(r, positions, 'row');
-        }
-        this.checkResult = 'Checking columns...';
-        if (!error) {
-            for (let c = 0; c < 9; c++) {
-                const positions  = this.getColPositions(c);
-                error = error || !this.chekPostions(c, positions, 'column');
-            }
-        }
-        this.checkResult = 'Checking squares...';
-        if (!error) {
-            for (let r = 0; r < 3; r++) {
-                for (let c = 0; c < 3; c++) {
-                    const positions  = this.getSquarePositions(r, c);
-                    error = error || !this.chekPostions('${r},${c}', positions, 'square');
-                }
-            }
-        }
-        if (!error) {
-            this.checkResult = 'Checked!';
-        }
-    }
-
-    chekPostions(orign: any, positions: {row: number, col: number}[], checkTypeMsg: string): boolean {
-        const counters = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-
-        // tslint:disable-next-line: prefer-for-of
-        for (let p = 0; p < positions.length; p++) {
-            counters[ this.cells[ positions[p].row ][ positions[p].col].value ]++;
-        }
-
-        if (counters[0] > 0) {
-            this.checkResult = 'Row ${r} not completely solved';
-            return false;
-        }
-
-        const wrongindex = counters.findIndex( (value, index, arr) => index === 0 ? false : value > 1);
-        if (wrongindex !== -1) {
-            this.checkResult = `Number ${wrongindex} in present more than once in ${checkTypeMsg} ${orign}`;
-            return false;
-        }
-
-        return true;
-    }
-
-
-
-    getRowPositions(currentrow: number): {row: number, col: number}[] {
-
-        const postions = [];
-        for (let c = 0; c < 9; c++) {
-            postions.push({row: currentrow, col: c});
-        }
-
-        return postions;
-    }
-
-    getColPositions(currentcol: number): {row: number, col: number}[] {
-
-        const postions = [];
-        for (let r = 0; r < 9; r++) {
-            postions.push({row: r, col: currentcol});
-        }
-
-        return postions;
-    }
-
-    getSquarePositions(sqrow: number, sqcol: number): {row: number, col: number}[] {
-
-        const postions = [];
-        for (let r = 0; r < 3; r++) {
-            for (let c = 0; c < 3; c++) {
-                postions.push({row: sqrow * 3 + r, col: sqcol * 3 + c});
-            }
-        }
-
-        return postions;
-    }
-
-    public setInputValue(row: number, col: number, value: string) {
+    public setInputValue(row: number, col: number, value: string, confirm: boolean = true) {
         this.inputCells[row][col] = value.length === 0 ? 0 : Number(value);
-        this.cells[row][col].setValue(this.inputCells[row][col]);
+        if (confirm) {
+            this.cells[row][col].setValue(this.inputCells[row][col]);
+        }
     }
+
+    confirmAllInputValue() {
+        for (let row = 0; row < 9; row++) {
+            for (let col = 0; col < 9; col++) {
+                this.cells[row][col].setValue(this.inputCells[row][col]);
+            }
+      }
+    }
+
 }
 
