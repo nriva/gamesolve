@@ -11,19 +11,35 @@ export class GameCell {
         this.values = this.ALL_VALUES;
     }
 
-    public assignValue(value: number) {
+    public assignValue(value: number): boolean {
         // Solo la prima volta
         if (this.value !== 0 || value === 0) {
-            return;
+            return false;
         }
 
         this.value = value;
         this.values = [];
+        return true;
     }
 
     public setValue(value: number) {
         this.value = value;
         this.values = this.ALL_VALUES.filter( (elem, index, a) => elem !== value );
+    }
+
+
+    public copyFrom(other: GameCell) {
+        this.value = other.value;
+        this.values = other.values.filter(() => true);
+    }
+
+    public guessValue(): boolean {
+        if (this.values.length > 0) {
+            this.value = this.values.pop();
+            return true;
+        }
+
+        return false;
     }
 
 }

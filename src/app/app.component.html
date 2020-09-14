@@ -4,20 +4,19 @@
 </mat-card>
 <mat-toolbar>
   <mat-toolbar-row>
-  <button mat-raised-button (click)="schema.resetWorkCells()">Reset</button>&nbsp;
-  <button mat-raised-button (click)="schema.step()">Step</button>&nbsp;
-  <button mat-raised-button (click)="schema.solve()">Solve</button>&nbsp;
-  <button mat-raised-button (click)="schema.stop()">Stop</button>&nbsp;
-  <button mat-raised-button (click)="input()">{{inputAction}}</button>&nbsp;
-  <span *ngIf="schema.solving">Round: {{schema.round}}</span>&nbsp;
-  <span *ngIf="isInput">
-  <label>Fast Input:</label><input type=text (paste)="onPaste($event)">
-  Comma separated valued for each line, line sperated by newline chars.
-  </span>
+  <button *ngIf="!isInput && !isGenerating" mat-raised-button (click)="reset()">Reset</button>&nbsp;
+  <button *ngIf="!isInput && !isGenerating" mat-raised-button (click)="step()">Step</button>&nbsp;
+  <button *ngIf="!isInput && !isGenerating" mat-raised-button (click)="solve()">Solve</button>&nbsp;
+  <button *ngIf="!isInput && !isGenerating" mat-raised-button (click)="stop()">Stop</button>&nbsp;
+  <button *ngIf="!isInput && !isGenerating" mat-raised-button (click)="pause()">Pause</button>&nbsp;
+  <button *ngIf="!isGenerating" mat-raised-button (click)="input()">{{inputAction}}</button>&nbsp;
+  <span *ngIf="isInput"><label>Fast Input:</label><input type=text (paste)="onPaste($event)">Comma separated valued for each line, line sperated by newline chars.&nbsp;</span>
+  <button *ngIf="!isInput" mat-raised-button (click)="generate()">{{generateAction}}</button>
+  <span *ngIf="isGenerating && !isInput">&nbsp;<label>Holes:</label> <input type="text" [(ngModel)]="holes"></span>
+
 </mat-toolbar-row>
 <mat-toolbar-row>
-    <span>{{schema.solutionResult}}</span>&nbsp;
-  <span>{{schema.checkResult}}</span>
+  <span>Round: {{schema.round}}</span>&nbsp;<span>{{solutionResult}}</span>&nbsp;<span>{{checkResult}}</span>
 </mat-toolbar-row>
 <!-- mat-toolbar-row>
 <mat-progress-bar *ngIf="schema.solving" mode="indeterminate"></mat-progress-bar>

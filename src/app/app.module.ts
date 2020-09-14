@@ -6,6 +6,8 @@ import { AppComponent } from './app.component';
 
 import {DemoMaterialModule} from '../material-module';
 
+import {FormsModule} from '@angular/forms';
+
 
 @NgModule({
   declarations: [
@@ -13,6 +15,7 @@ import {DemoMaterialModule} from '../material-module';
   ],
   imports: [
     BrowserModule,
+    FormsModule,
     AppRoutingModule,
     DemoMaterialModule
   ],

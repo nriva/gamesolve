@@ -3,8 +3,12 @@ import { GameSchemaCheckerResult } from './game-schema-checker-result';
 
 export class GameSchemaChecker {
 
+    incomplete: boolean;
 
-    public check(cells: GameCell[][]): GameSchemaCheckerResult {
+
+    public check(cells: number[][], incomplete: boolean = false): GameSchemaCheckerResult {
+
+        this.incomplete = incomplete;
 
         let error = false;
         let result: GameSchemaCheckerResult;
@@ -14,14 +18,14 @@ export class GameSchemaChecker {
 
             const positions  = this.getRowPositions(r);
             result = this.chekPostions(cells, r, positions, 'row');
-            error = error || !result.error;
+            error = error || result.error;
         }
         // this.checkResult = 'Checking columns...';
         if (!error) {
             for (let c = 0; c < 9; c++) {
                 const positions  = this.getColPositions(c);
                 result = this.chekPostions(cells, c, positions, 'column');
-                error = error || !result.error;
+                error = error || result.error;
             }
         }
         // this.checkResult = 'Checking squares...';
@@ -30,11 +34,10 @@ export class GameSchemaChecker {
                 for (let c = 0; c < 3; c++) {
                     const positions  = this.getSquarePositions(r, c);
                     result = this.chekPostions(cells, '${r},${c}', positions, 'square');
-                    error = error || !result.error;
+                    error = error || result.error;
                 }
             }
         }
-        
         if (!error) {
             result.error = false;
             result.resultMessage = 'Checked!';
@@ -43,7 +46,7 @@ export class GameSchemaChecker {
         return result;
     }
 
-    chekPostions(cells: GameCell[][], orign: any, positions: {row: number, col: number}[], checkTypeMsg: string)
+    chekPostions(cells: number[][], origin: any, positions: {row: number, col: number}[], checkTypeMsg: string)
                     : GameSchemaCheckerResult {
         const counters = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         const r = new GameSchemaCheckerResult();
@@ -51,19 +54,19 @@ export class GameSchemaChecker {
 
         // tslint:disable-next-line: prefer-for-of
         for (let p = 0; p < positions.length; p++) {
-            counters[ cells[ positions[p].row ][ positions[p].col].value ]++;
+            counters[ cells[ positions[p].row ][ positions[p].col] ]++;
         }
 
-        if (counters[0] > 0) {
+        if (counters[0] > 0 && !this.incomplete) {
             r.resultMessage = 'Row ${r} not completely solved';
-            r.error = false;
+            r.error = true;
             return r;
         }
 
         const wrongindex = counters.findIndex( (value, index, arr) => index === 0 ? false : value > 1);
         if (wrongindex !== -1) {
-            r.resultMessage = `Number ${wrongindex} in present more than once in ${checkTypeMsg} ${orign}`;
-            r.error = false;
+            r.resultMessage = `Number ${wrongindex} in present more than once in ${checkTypeMsg} ${origin}`;
+            r.error = true;
             return r;
         }
 

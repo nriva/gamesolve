@@ -1,17 +1,37 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { GameSchema } from './game-schema';
-import { MatChipListBase } from '@angular/material';
+import { GameSchemaGenerator } from 'src/shared/game-schema-generator';
+import { GameSchemaChecker } from 'src/shared/game-schema-checker';
+import { GameSchema } from 'src/shared/game-schema';
+import { LastRoundCall } from './last-round-call';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
-  title = 'gamesolve';
+export class AppComponent implements LastRoundCall {
+    title = 'gamesolve';
 
-  public isInput = false;
-  public inputAction = 'New';
+    public isInput = false;
+    public isGenerating = false;
+
+    private readonly ACTION_NEW = 'Edit';
+    private readonly ACTION_CONFIRM = 'Confirm';
+    private readonly ACTION_GENERATE = 'Generate';
+
+
+    public inputAction = this.ACTION_NEW;
+    public generateAction = this.ACTION_GENERATE;
+
+
+    // Messaggio con l'esito della ricerca della soluzione
+    public solutionResult = '';
+    public checkResult = '';
+
+    public holes: number;
+
+
+    public schema: GameSchema = new GameSchema();
 
 
   @ViewChild('input11') input11: ElementRef;
@@ -95,12 +115,8 @@ export class AppComponent {
   @ViewChild('input97') input97: ElementRef;
   @ViewChild('input98') input98: ElementRef;
   @ViewChild('input99') input99: ElementRef;
-  
-
-  public schema: GameSchema =  new GameSchema();
 
   constructor() {
-
   }
 
   public input() {
@@ -191,8 +207,8 @@ export class AppComponent {
     }
 
     this.isInput = !this.isInput;
-    this.inputAction = this.isInput ? 'Confirm' : 'New';
-}  
+    this.inputAction = this.isInput ? this.ACTION_CONFIRM : this.ACTION_NEW;
+}
 
   public onPaste(event: ClipboardEvent) {
 
@@ -228,11 +244,72 @@ export class AppComponent {
     if (setCounter === 81) {
       this.schema.confirmAllInputValue();
       this.isInput = false;
-      this.inputAction = 'New';
+      this.inputAction = this.ACTION_NEW;
+      this.solutionResult = '';
+      this.schema.round = 0;
+      this.checkResult = '';
     }
 
 
   }
 
+public stop() {
+  this.schema.stop();
+}
+
+public pause() {
+  this.schema.pause();
+}
+
+public step() {
+  this.schema.step(this);
+}
+
+public solve() {
+  this.solutionResult = '';
+  this.schema.solve(this);
+}
+
+public lastRound(schema: GameSchema, solvedOneCell: boolean) {
+  if (!solvedOneCell) {
+      this.solutionResult = 'Solution search stopped after ' + schema.getRounds() + ' steps.';
+  } else if (!schema.isSolved()) {
+      this.solutionResult = 'Solution not found after ' + schema.getRounds() + ' steps.';
+  } else {
+      this.solutionResult = 'Solution found after ' + schema.getRounds() + ' steps.';
+  }
+}
+
+public check() {
+  const checker = new GameSchemaChecker();
+  const result = checker.check(this.schema.getValues());
+  this.checkResult = result.resultMessage;
+}
+
+public generate() {
+
+  if (this.isGenerating) {
+
+    this.solutionResult = '';
+    this.schema.resetCells();
+    const generator: GameSchemaGenerator = new GameSchemaGenerator(9, this.holes);
+    generator.fillValues();
+    this.schema.setCells(generator.mat);
+    this.isGenerating = false;
+    this.generateAction = this.ACTION_GENERATE;
+  } else {
+    this.isGenerating = true;
+    this.generateAction = this.ACTION_CONFIRM;
+  }
+}
+
+public reset() {
+  this.solutionResult = '';
+  this.schema.resetCells();
+}
+
+
 
 }
+
+
